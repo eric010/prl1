@@ -1,0 +1,5 @@
+CPPminer
+https://github.com/1640675651/CPPminer
+Commit: 6785ad349a33f7bebb3ffe1dc1ad876b56d66ef8
+License: MIT; author: foolzhz
+Adaptation: PRL3060 Kryptex, experimental source package

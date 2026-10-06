@@ -1,0 +1,9 @@
+{
+  "pool": "stratum+tcp://prl.kryptex.network:7048",
+  "wallet": "COLOCA_O_TEU_ID_KRYPTEX_OU_ENDERECO_PRL",
+  "worker": "3060tix4",
+  "password": "x",
+  "devices": [0],
+  "row_batch": 4,
+  "col_batch": 32
+}

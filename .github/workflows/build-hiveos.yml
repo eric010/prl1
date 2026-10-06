@@ -1,0 +1,36 @@
+name: Build PRL3060 HiveOS (experimental)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'engine/**'
+      - 'hiveos/**'
+      - 'scripts/**'
+      - 'Dockerfile.build'
+      - '.github/workflows/build-hiveos.yml'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compile CUDA and run local proof tests
+        run: docker build -f Dockerfile.build -t prl3060-build:0.1.0 .
+      - name: Export runtime
+        run: |
+          mkdir -p dist
+          docker run --rm -v "$PWD/dist:/export" prl3060-build:0.1.0
+          test -s dist/prl3060-kryptex-0.1.0.tar.gz
+          sha256sum dist/prl3060-kryptex-0.1.0.tar.gz > dist/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prl3060-kryptex-experimental
+          path: dist/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 14

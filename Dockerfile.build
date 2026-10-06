@@ -1,0 +1,15 @@
+# Build only: no GPU access is needed to compile. Runtime/GPU verification remains mandatory.
+FROM nvidia/cuda:12.8.1-devel-ubuntu22.04
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends build-essential cmake curl ca-certificates git python3 pkg-config && rm -rf /var/lib/apt/lists/*
+RUN curl --fail --location --proto '=https' --tlsv1.2 https://sh.rustup.rs -o /tmp/rustup.sh && sh /tmp/rustup.sh -y --profile minimal --default-toolchain 1.90.0 && rm /tmp/rustup.sh
+ENV PATH="/root/.cargo/bin:${PATH}"
+WORKDIR /project
+COPY . .
+RUN git clone --depth 1 --branch v2.11.0 https://github.com/NVIDIA/cutlass.git engine/third_party/cutlass
+ENV CARGO_BUILD_JOBS=2
+RUN cmake -S engine -B /build -DCMAKE_BUILD_TYPE=Release -DCP_ENABLE_CPU=OFF -DCP_ENABLE_CUDA=ON -DCP_ENABLE_OPENCL=OFF -DCP_ENABLE_CUBLAS=ON -DCP_CUDA_ARCH=86 -DCMAKE_CUDA_ARCHITECTURES=86 -DPRL_ALLOW_PROOF_STUB_TEST_ONLY=OFF && cmake --build /build -j 2
+RUN cargo test --release --locked --manifest-path engine/rust/cp-proof-ffi/Cargo.toml -j 2
+RUN python3 tests/test_runtime.py
+RUN python3 scripts/collect-notices.py
+RUN bash scripts/package.sh /build/cppminer /out
+CMD ["bash", "-c", "cp /out/prl3060-kryptex-0.1.0.tar.gz /export/"]

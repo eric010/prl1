@@ -1,0 +1,12 @@
+Current source reconstruction, 2026-10-06:
+Host C++ build with test-only proof stub: PASS
+C++ localhost protocol/job/no-fee/response correlation tests: PASS
+Python config/stats/per-GPU workdir tests: 7 PASS
+Bash syntax and Python compilation: PASS
+Rust proof suite: NOT RERUN in this reconstruction; the Docker build runs it as a gate
+CUDA rebuild: BLOCKED by network policy at developer.download.nvidia.com
+Previous-session CUDA artifacts: not preserved; no runtime executable is delivered
+GitHub Actions / Docker workflow execution: NOT RUN
+RTX 3060 Ti execution, VRAM/RAM with 4 GPUs: NOT RUN
+Kryptex live authentication and accepted shares: NOT RUN
+Performance/efficiency comparison and live HiveOS integration: NOT RUN
