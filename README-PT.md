@@ -19,9 +19,9 @@ Não alteramos clocks, power limits, ventoinhas, Flight Sheets existentes ou dri
 
 ## Estado real
 
-Este ZIP continua a conter apenas código-fonte. A compilação CUDA da sessão anterior terminou, mas os seus artefactos não ficaram preservados. Na reconstrução, o acesso a developer.download.nvidia.com foi bloqueado pela política de rede do ambiente. Não existe neste pacote um executável CUDA disponível para instalar.
+O código-fonte foi publicado em https://github.com/eric010/prl1. A compilação CUDA terminou com sucesso no GitHub Actions: https://github.com/eric010/prl1/actions/runs/37532628830. Passaram 10 testes Rust e 7 testes Python. Os testes C++ de protocolo também passaram localmente.
 
-As correções de código foram recuperadas. Os testes locais C++ e Python foram novamente executados. Os testes Rust e a receita Docker devem correr numa nova compilação; o workflow incluído executa esses testes antes de empacotar. A compilação por GitHub Actions ainda não foi lançada.
+O pacote compilado está associado à release experimental v0.1.0. O ZIP de código-fonte permanece distinto do tar.gz de runtime. A release regista o commit e a execução de CI utilizados.
 
 Não há GPU NVIDIA neste ambiente. A execução CUDA numa RTX 3060 Ti, o consumo total de RAM/VRAM, a autorização e as shares aceites na Kryptex continuam por validar. Não existe qualquer medição de hashrate deste protótipo.
 
@@ -67,7 +67,7 @@ docker build -f Dockerfile.build -t prl3060-build:0.1.0 .
 docker run --rm -v "$PWD/dist:/export" prl3060-build:0.1.0
 ```
 
-O build descarrega a imagem NVIDIA, dependências Ubuntu, Rust e CUTLASS v2.11.0. Pode demorar e ocupar vários GB. A receita não foi executada neste ambiente; poderá precisar de correções após a primeira compilação. O ficheiro pretendido no fim é `dist/prl3060-kryptex-0.1.0.tar.gz`.
+O build descarrega a imagem NVIDIA, dependências Ubuntu, Rust e CUTLASS v2.11.0. Pode demorar e ocupar vários GB. A receita foi executada com sucesso no GitHub Actions. O ficheiro pretendido no fim é `dist/prl3060-kryptex-0.1.0.tar.gz`.
 
 Esse pacote destina-se a sistemas com glibc >= 2.35 (Ubuntu 22.04 ou mais recente). A tua glibc 2.35 já foi confirmada; ainda falta testar o executável na rig. Um rig com Ubuntu 20.04 precisa de outro ambiente de compilação.
 
@@ -75,7 +75,7 @@ O empacotamento inclui as bibliotecas CUDA necessárias, mas nunca o driver `lib
 
 ## Compilar com GitHub Actions
 
-O pacote inclui o workflow `.github/workflows/build-hiveos.yml`, preparado mas ainda não executado. Arranca automaticamente num push para main que altere o código ou os ficheiros de compilação; também pode ser iniciado manualmente. Para o utilizar, os conteúdos desta pasta têm de estar na raiz de um repositório GitHub, incluindo o workflow. Em **Actions → Build PRL3060 HiveOS (experimental) → Run workflow**, a compilação usa Ubuntu 22.04/CUDA 12.8.1, executa os testes de provas e cria um artefacto `prl3060-kryptex-experimental` com o tar.gz e o seu SHA256. Não publica automaticamente uma release nem altera a rig.
+O pacote inclui o workflow `.github/workflows/build-hiveos.yml`, executado com sucesso no GitHub Actions. Arranca automaticamente num push para main que altere o código ou os ficheiros de compilação; também pode ser iniciado manualmente. Para o utilizar, os conteúdos desta pasta têm de estar na raiz de um repositório GitHub, incluindo o workflow. Em **Actions → Build PRL3060 HiveOS (experimental) → Run workflow**, a compilação usa Ubuntu 22.04/CUDA 12.8.1, executa os testes de provas e cria um artefacto `prl3060-kryptex-experimental` com o tar.gz e o seu SHA256. Não publica automaticamente uma release nem altera a rig.
 
 Existe também `scripts/build-local.py`, para Linux com Python 3.12+, CMake, make, curl, git e dpkg-deb. Descarrega componentes oficiais NVIDIA/Rust/Ubuntu, verifica os SHA256 dos manifestos e compila com um sysroot glibc 2.35. Precisa de acesso de rede aos fornecedores; essa receita ficou bloqueada neste ambiente. Não é um instalador para a rig.
 
@@ -101,7 +101,7 @@ Existe também `scripts/build-local.py`, para Linux com Python 3.12+, CMake, mak
 | Extra config, primeiro ensaio | `--devices 0` |
 | Extra config, quatro placas | `--devices 0,1,2,3` |
 
-O campo Installation URL requer um endereço HTTPS para o **tar.gz compilado**. Este ZIP de código-fonte e um link `sandbox:` não servem nesse campo. Não foi publicado um URL de instalação. Em alternativa, um pacote compilado pode ser transferido manualmente para o rig; a instalação deve ser feita apenas depois dos testes acima.
+O campo Installation URL requer um endereço HTTPS para o **tar.gz compilado**. Este ZIP de código-fonte e um link `sandbox:` não servem nesse campo. URL da release experimental: `https://github.com/eric010/prl1/releases/download/v0.1.0/prl3060-kryptex-0.1.0.tar.gz`. Em alternativa, um pacote compilado pode ser transferido manualmente para o rig; a instalação deve ser feita apenas depois dos testes acima.
 
 O hashrate do painel é calculado a partir dos intervalos de trabalho reportados pelo motor. A conversão é 1 TH/s = 10^12 H/s = 10^9 kH/s. Estatísticas antigas ou de processos desligados são apresentadas com hashrate zero. Uma leitura positiva não prova que a pool está a aceitar as provas.
 
