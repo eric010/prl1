@@ -1,0 +1,44 @@
+name: Publish experimental HiveOS package
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-experimental.yml']
+permissions:
+  actions: read
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Download the successful build
+        uses: actions/download-artifact@v4
+        with:
+          name: prl3060-kryptex-experimental
+          path: dist
+          github-token: ${{ github.token }}
+          run-id: 37532628830
+      - name: Verify and publish experimental package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: eric010/prl1
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c dist/SHA256SUMS
+          tar -tzf dist/prl3060-kryptex-0.1.0.tar.gz > package-files.txt
+          grep -Fx 'prl3060-kryptex/prl3060-engine' package-files.txt
+          grep -Fx 'prl3060-kryptex/h-run.sh' package-files.txt
+          cat > release-notes.txt <<'NOTES'
+          Protótipo experimental PRL3060 para RTX 3060 Ti / HiveOS / Kryptex.
+          
+          Compilado com CUDA 12.8.1 para sm_86, Ubuntu 22.04 / glibc 2.35.
+          Validação CI: compilação concluída; 10 testes Rust e 7 testes Python passaram.
+          Ainda não testado numa GPU real nem com shares aceites na Kryptex. Sem medição de hashrate.
+          Começar pelo selftest.sh numa única GPU antes de utilizar a pool.
+          O tar.gz é o pacote Custom Miner; o código e as instruções estão no repositório.
+          
+          Build: https://github.com/eric010/prl1/actions/runs/37532628830
+          NOTES
+          gh release create v0.1.0 dist/prl3060-kryptex-0.1.0.tar.gz dist/SHA256SUMS --target afeee57c1ed72a15fcfa1dd147f04ed0586782b5 --prerelease --title 'PRL3060 Kryptex 0.1.0 — experimental' --notes-file release-notes.txt
