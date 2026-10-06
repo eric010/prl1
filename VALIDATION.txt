@@ -10,3 +10,10 @@ GitHub Actions / Docker workflow execution: PASS, commit afeee57c1ed72a15fcfa1dd
 RTX 3060 Ti execution, VRAM/RAM with 4 GPUs: NOT RUN
 Kryptex live authentication and accepted shares: NOT RUN
 Performance/efficiency comparison and live HiveOS integration: NOT RUN
+
+HiveOS configuration hotfix 0.1.1:
+Root cause: h-config.sh was sourced but only defined a function; config.json was never generated.
+Fix: generate configuration immediately in an isolated subshell.
+Regression tests: sourced from Hive-style callback using unexported shell variables; parent callbacks preserved; missing wallet fails; config mode 0600.
+Python runtime suite after fix: 9 PASS locally.
+Real rig restart after fix: pending user validation.

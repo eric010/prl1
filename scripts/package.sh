@@ -41,4 +41,4 @@ for prl_notice in /usr/local/cuda/EULA.txt /usr/local/cuda/doc/EULA.txt /usr/loc
 done
 chmod +x "$prl_dest"/*.sh "$prl_dest/prl3060-engine"
 (cd "$prl_dest" && find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
-tar -czf "$prl_out/prl3060-kryptex-0.1.0.tar.gz" -C "$prl_stage" prl3060-kryptex
+tar -czf "$prl_out/prl3060-kryptex-0.1.1.tar.gz" -C "$prl_stage" prl3060-kryptex

@@ -12,6 +12,34 @@ from configure import from_hive
 
 BASE = dict(wallet='krxTESTACCOUNT',worker='3060tix4',password='x',pool='stratum+tcp://prl.kryptex.network:7048')
 class RuntimeTests(unittest.TestCase):
+    def test_hive_sources_config_with_unexported_variables(self):
+        script=Path(__file__).resolve().parents[1]/'hiveos'/'h-config.sh'
+        with tempfile.TemporaryDirectory() as d:
+            config=Path(d)/'config.json'
+            code='''miner_config_gen() { printf parent; }
+miner_config_echo() { printf echo-parent; }
+CUSTOM_TEMPLATE=krxTESTACCOUNT/3060tix4
+CUSTOM_URL=stratum+tcp://prl-eu.kryptex.network:7048
+CUSTOM_USER_CONFIG="--devices 0"
+CUSTOM_CONFIG_FILENAME=$2
+config_gen() { source "$1"; }
+config_gen "$1" || exit $?
+test "$(miner_config_gen)" = parent && test "$(miner_config_echo)" = echo-parent
+'''
+            subprocess.run(['bash','-c',code,'test',str(script),str(config)],check=True)
+            c=json.loads(config.read_text())
+            self.assertEqual(c['wallet'],'krxTESTACCOUNT')
+            self.assertEqual(c['worker'],'3060tix4')
+            self.assertEqual(c['devices'],[0])
+            self.assertEqual(config.stat().st_mode & 0o777,0o600)
+    def test_hive_config_missing_wallet_fails(self):
+        script=Path(__file__).resolve().parents[1]/'hiveos'/'h-config.sh'
+        with tempfile.TemporaryDirectory() as d:
+            config=Path(d)/'config.json'
+            code='CUSTOM_TEMPLATE=""; CUSTOM_CONFIG_FILENAME=$2; source "$1"'
+            result=subprocess.run(['bash','-c',code,'test',str(script),str(config)],capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertFalse(config.exists())
     def test_separate_gpu_workdirs(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);engine=root/'prl3060-engine'

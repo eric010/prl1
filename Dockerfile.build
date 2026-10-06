@@ -12,4 +12,4 @@ RUN cargo test --release --locked --manifest-path engine/rust/cp-proof-ffi/Cargo
 RUN python3 tests/test_runtime.py
 RUN python3 scripts/collect-notices.py
 RUN bash scripts/package.sh /build/cppminer /out
-CMD ["bash", "-c", "cp /out/prl3060-kryptex-0.1.0.tar.gz /export/"]
+CMD ["bash", "-c", "cp /out/prl3060-kryptex-0.1.1.tar.gz /export/"]

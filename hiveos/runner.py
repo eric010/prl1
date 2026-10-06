@@ -13,7 +13,7 @@ import sys
 import threading
 import time
 
-VERSION = '0.1.0-experimental'
+VERSION = '0.1.1-experimental'
 RATE = re.compile(r'([0-9.]+) ([KMGTP]?)MAC/s')
 UNITS = {'': 1, 'K': 1e3, 'M': 1e6, 'G': 1e9, 'T': 1e12, 'P': 1e15}
 
